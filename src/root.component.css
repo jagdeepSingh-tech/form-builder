@@ -1,0 +1,68 @@
+:root {
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-primary-light: #eef2ff;
+  --color-background: #f9fafb;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-text-secondary: #374151;
+  --color-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-border-hover: #d1d5db;
+  --color-error: #dc2626;
+  --color-error-light: #fee2e2;
+  --color-success: #10b981;
+  --color-shadow: rgba(0, 0, 0, 0.04);
+  --color-shadow-hover: rgba(0, 0, 0, 0.06);
+  --color-shadow-primary: rgba(79, 70, 229, 0.1);
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 0.9375rem;
+  --font-size-lg: 1rem;
+  --font-size-xl: 1.125rem;
+  --font-size-2xl: 1.5rem;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --transition-default: all 0.2s ease;
+  --transition-fast: all 0.15s ease;
+}
+
+.root-container {
+  min-height: 100vh;
+  background: var(--color-background);
+  font-family: var(--font-family);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.root-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
+  flex: 1;
+  overflow: hidden;
+}
+
+@media (max-width: 1200px) {
+  .root-layout {
+    grid-template-columns: 240px 1fr 280px;
+  }
+}
+

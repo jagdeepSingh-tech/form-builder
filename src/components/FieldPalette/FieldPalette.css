@@ -1,0 +1,54 @@
+.field-palette {
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  padding: var(--spacing-lg);
+  overflow-y: auto;
+  box-shadow: 2px 0 8px var(--color-shadow);
+  height: 100%;
+}
+
+.field-palette-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin: 0 0 var(--spacing-lg) 0;
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.field-palette-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.field-palette-item {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  cursor: pointer;
+  transition: var(--transition-default);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.field-palette-item:hover {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px var(--color-shadow-primary);
+}
+
+.field-palette-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.field-palette-label {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
