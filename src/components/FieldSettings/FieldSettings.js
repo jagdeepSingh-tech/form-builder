@@ -109,53 +109,60 @@ const FieldSettings = ({ selectedField, fields, onUpdate }) => {
     onUpdate(updatedFields);
   };
 
+  const isSection = field.type === "section";
   const needsOptions = field.type === "select";
-  const needsPlaceholder = !needsOptions;
+  const needsPlaceholder = !needsOptions && !isSection;
 
   return (
     <div className="field-settings">
       <h2 className="field-settings-title">Field Settings</h2>
 
       <div className="field-settings-group">
-        <label className="field-settings-label">Label</label>
+        <label className="field-settings-label">
+          {isSection ? "Section Title" : "Label"}
+        </label>
         <input
           type="text"
           value={field.label || ""}
           onChange={(e) => handleLabelChange(e.target.value)}
           className="field-settings-input"
-          placeholder="Field label"
+          placeholder={isSection ? "Section title" : "Field label"}
         />
       </div>
 
-      {needsPlaceholder && (
-        <div className="field-settings-group">
-          <label className="field-settings-label">Placeholder</label>
-          <input
-            type="text"
-            value={field.placeholder || ""}
-            onChange={(e) => handlePlaceholderChange(e.target.value)}
-            className="field-settings-input"
-            placeholder="Placeholder text"
-          />
-        </div>
-      )}
+      {!isSection && (
+        <>
+          {needsPlaceholder && (
+            <div className="field-settings-group">
+              <label className="field-settings-label">Placeholder</label>
+              <input
+                type="text"
+                value={field.placeholder || ""}
+                onChange={(e) => handlePlaceholderChange(e.target.value)}
+                className="field-settings-input"
+                placeholder="Placeholder text"
+              />
+            </div>
+          )}
 
-      <div className="field-settings-group">
-        <Toggle
-          value={field.required || false}
-          onChange={handleRequiredChange}
-          label="Required field"
-        />
-      </div>
+          <div className="field-settings-group">
+            <Toggle
+              value={field.required || false}
+              onChange={handleRequiredChange}
+              label="Required field"
+            />
+          </div>
 
-      {needsOptions && (
-        <div className="field-settings-group">
-          <label className="field-settings-label">Options</label>
-          <OptionsEditor
-            options={field.options || ["Option 1"]}
-            onChange={handleOptionsChange}
-          />
-        </div>
+          {needsOptions && (
+            <div className="field-settings-group">
+              <label className="field-settings-label">Options</label>
+              <OptionsEditor
+                options={field.options || ["Option 1"]}
+                onChange={handleOptionsChange}
+              />
+            </div>
+          )}
+        </>
       )}
     </div>
   );

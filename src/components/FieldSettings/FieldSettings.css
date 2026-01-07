@@ -1,9 +1,5 @@
 .field-settings {
-  background: var(--color-surface);
-  border-left: 1px solid var(--color-border);
   padding: var(--spacing-lg);
-  overflow-y: auto;
-  box-shadow: -2px 0 8px var(--color-shadow);
   height: 100%;
 }
 

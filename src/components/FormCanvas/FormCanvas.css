@@ -1,9 +1,6 @@
 .form-canvas {
-  flex: 1;
   padding: var(--spacing-lg);
-  overflow-y: auto;
   background: var(--color-surface);
-  height: 100%;
 }
 
 .form-canvas-content {
@@ -12,17 +9,33 @@
 }
 
 .form-canvas-empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100%;
-  color: var(--color-muted);
-  font-size: var(--font-size-xl);
+  padding: var(--spacing-xl) 0;
   text-align: center;
+  color: var(--color-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
 .form-canvas-empty-text {
   margin: 0;
+}
+
+.form-canvas-empty-icon {
+  font-size: 32px;
+}
+
+.form-canvas-empty-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+}
+
+.form-canvas-empty-subtitle {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
 }
 
 .form-canvas-field {
@@ -124,4 +137,17 @@
   font-size: var(--font-size-sm);
   color: var(--color-muted);
 }
+
+.field-item {
+  border: 1px solid transparent;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.field-item.selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
 

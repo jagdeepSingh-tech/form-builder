@@ -1,7 +1,7 @@
 import React from "react";
 import "./Header.css";
 
-const Header = ({ onSave, isSaving = false }) => {
+const Header = ({ onSave, isSaving = false, isFormValid = true }) => {
   return (
     <header className="header">
       <div className="header-content">
@@ -9,7 +9,7 @@ const Header = ({ onSave, isSaving = false }) => {
         <button
           className="header-save-button"
           onClick={onSave}
-          disabled={isSaving}
+          disabled={isSaving || !isFormValid}
         >
           {isSaving ? "Saving..." : "Save Form"}
         </button>

@@ -1,4 +1,5 @@
 import React from "react";
+import SectionHeader from "../SectionHeader/SectionHeader";
 import "./FormCanvas.css";
 
 const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField }) => {
@@ -55,8 +56,10 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField }) =
     return (
       <div className="form-canvas">
         <div className="form-canvas-empty">
-          <p className="form-canvas-empty-text">
-            Click on a field type from the palette to add it to your form
+          <div className="form-canvas-empty-icon">📋</div>
+          <h2 className="form-canvas-empty-title">Start building your form</h2>
+          <p className="form-canvas-empty-subtitle">
+            Choose a field type from the left to add it here.
           </p>
         </div>
       </div>
@@ -68,31 +71,55 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField }) =
       <div className="form-canvas-content">
         {fields.map((field, index) => {
           const isSelected = selectedFieldId === field.id;
+
+          if (field.type === "section") {
+            return (
+              <div
+                key={field.id}
+                className={`field-item${isSelected ? " selected" : ""}`}
+                onClick={() => onSelectField(field.id)}
+              >
+                <SectionHeader
+                  label={field.label}
+                  isSelected={isSelected}
+                  onClick={() => onSelectField(field.id)}
+                  onDelete={() => onDeleteField(field.id)}
+                />
+              </div>
+            );
+          }
+
           return (
             <div
               key={field.id}
-              className={`form-canvas-field ${isSelected ? "form-canvas-field-selected" : ""}`}
+              className={`field-item${isSelected ? " selected" : ""}`}
               onClick={() => onSelectField(field.id)}
             >
-              <div className="form-canvas-field-actions">
-                <button
-                  className="form-canvas-field-action form-canvas-field-action-delete"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDeleteField(field.id);
-                  }}
-                  title="Delete field"
-                >
-                  🗑️
-                </button>
-              </div>
-              <label
-                className={`form-canvas-field-label ${field.required ? "form-canvas-field-label-required" : ""}`}
+              <div
+                className={`form-canvas-field ${
+                  isSelected ? "form-canvas-field-selected" : ""
+                }`}
               >
-                {field.label || "Untitled Field"}
-                {field.required && " *"}
-              </label>
-              {renderInput(field)}
+                <div className="form-canvas-field-actions">
+                  <button
+                    className="form-canvas-field-action form-canvas-field-action-delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteField(field.id);
+                    }}
+                    title="Delete field"
+                  >
+                    🗑️
+                  </button>
+                </div>
+                <label
+                  className={`form-canvas-field-label ${field.required ? "form-canvas-field-label-required" : ""}`}
+                >
+                  {field.label || "Untitled Field"}
+                  {field.required && " *"}
+                </label>
+                {renderInput(field)}
+              </div>
             </div>
           );
         })}
