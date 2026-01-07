@@ -14,7 +14,9 @@ export function createField(type) {
     type,
     label: "",
     placeholder: "",
-    required: false,
+    validations: {
+      required: false,
+    },
   };
 
   if (type === "select") {

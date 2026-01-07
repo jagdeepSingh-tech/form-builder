@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import Header from "./components/Header/Header";
 import FieldPalette from "./components/FieldPalette/FieldPalette";
 import FormCanvas from "./components/FormCanvas/FormCanvas";
-import FieldSettings from "./components/FieldSettings/FieldSettings";
+import FieldSettingsDrawer from "./components/FieldSettingsDrawer/FieldSettingsDrawer";
 import FormMeta from "./components/FormMeta/FormMeta";
-import { saveForm, updateForm } from "./services/formService";
+import { saveForm, updateForm, getFormById } from "./services/formService";
 import { createField } from "./services/fieldFactory";
 import { normalizeForm } from "./models/formSchema";
 import "./root.component.css";
@@ -19,30 +19,56 @@ export default function Root(props) {
   const [validationError, setValidationError] = useState(null);
 
   useEffect(() => {
-    if (!props || !props.formToEdit) return;
+    const state = window.history.state;
+    console.log("History state:", state);
 
-    const form = props.formToEdit;
-    setEditingFormId(form.id || null);
-    setTitle(form.title || "");
-    setDescription(form.description || "");
-
-    const incomingFields = Array.isArray(form.fields) ? form.fields : [];
-    setFields(incomingFields);
-
-    if (incomingFields.length) {
-      setSelectedFieldId(incomingFields[0].id);
+    if (state && state.formId) {
+      loadForm(state.formId);
     }
-  }, [props.formToEdit]);
+  }, []);
+
+  async function loadForm(formId) {
+    try {
+      const form = await getFormById(formId);
+
+      setTitle(form.title || "");
+      setDescription(form.description || "");
+      setFields(form.fields || []);
+      setEditingFormId(formId);
+    } catch (error) {
+      console.error("Failed to load form:", error);
+      alert("Failed to load form. Please try again.");
+    }
+  }
 
   const handleAddField = (type) => {
     const newField = createField(type);
-    setFields([...fields, newField]);
+
+    setFields((prevFields) => {
+      if (!selectedFieldId) {
+        return [...prevFields, newField];
+      }
+
+      const index = prevFields.findIndex((f) => f.id === selectedFieldId);
+      if (index === -1) {
+        return [...prevFields, newField];
+      }
+
+      const updated = [...prevFields];
+      updated.splice(index + 1, 0, newField);
+      return updated;
+    });
+
     setSelectedFieldId(newField.id);
     setValidationError(null);
   };
 
   const handleSelectField = (fieldId) => {
     setSelectedFieldId(fieldId);
+  };
+
+  const handleCloseDrawer = () => {
+    setSelectedFieldId(null);
   };
 
   const handleDeleteField = (fieldId) => {
@@ -96,7 +122,8 @@ export default function Root(props) {
         await updateForm(editingFormId, formData);
         formId = editingFormId;
       } else {
-        formId = await saveForm(formData);
+        const id = await saveForm(formData);
+        formId = id;
         setEditingFormId(formId);
       }
 
@@ -113,33 +140,33 @@ export default function Root(props) {
   return (
     <div className="root-container">
       <Header onSave={handleSave} isSaving={isSaving} isFormValid={isFormValid} />
-      {validationError && <div className="root-alert">{validationError}</div>}
-      <FormMeta
-        title={title}
-        description={description}
-        onChangeTitle={setTitle}
-        onChangeDescription={setDescription}
-      />
       <div className="root-layout">
         <div className="left-panel">
           <FieldPalette onAddField={handleAddField} />
         </div>
         <div className="center-panel">
+          {validationError && <div className="root-alert">{validationError}</div>}
+          <FormMeta
+            title={title}
+            description={description}
+            onChangeTitle={setTitle}
+            onChangeDescription={setDescription}
+          />
           <FormCanvas
             fields={fields}
             selectedFieldId={selectedFieldId}
             onSelectField={handleSelectField}
             onDeleteField={handleDeleteField}
-          />
-        </div>
-        <div className="right-panel">
-          <FieldSettings
-            selectedField={selectedFieldId}
-            fields={fields}
             onUpdate={handleUpdateFields}
           />
         </div>
       </div>
+      <FieldSettingsDrawer
+        selectedField={selectedFieldId}
+        fields={fields}
+        onUpdate={handleUpdateFields}
+        onClose={handleCloseDrawer}
+      />
     </div>
   );
 }

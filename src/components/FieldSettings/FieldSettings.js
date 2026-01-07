@@ -1,23 +1,7 @@
 import React from "react";
+import ConditionalEditor from "../ConditionalEditor/ConditionalEditor";
+import ValidationRules from "../ValidationRules/ValidationRules";
 import "./FieldSettings.css";
-
-const Toggle = ({ value, onChange, label }) => {
-  return (
-    <div className="field-settings-toggle">
-      <div
-        className={`field-settings-toggle-switch ${value ? "field-settings-toggle-switch-active" : ""}`}
-        onClick={() => onChange(!value)}
-      >
-        <div
-          className={`field-settings-toggle-thumb ${value ? "field-settings-toggle-thumb-active" : ""}`}
-        />
-      </div>
-      <label className="field-settings-toggle-label" onClick={() => onChange(!value)}>
-        {label}
-      </label>
-    </div>
-  );
-};
 
 const OptionsEditor = ({ options, onChange }) => {
   const handleAddOption = () => {
@@ -95,16 +79,23 @@ const FieldSettings = ({ selectedField, fields, onUpdate }) => {
     onUpdate(updatedFields);
   };
 
-  const handleRequiredChange = (value) => {
+  const handleOptionsChange = (options) => {
     const updatedFields = fields.map((f) =>
-      f.id === field.id ? { ...f, required: value } : f
+      f.id === field.id ? { ...f, options } : f
     );
     onUpdate(updatedFields);
   };
 
-  const handleOptionsChange = (options) => {
+  const handleConditionsChange = (conditions) => {
     const updatedFields = fields.map((f) =>
-      f.id === field.id ? { ...f, options } : f
+      f.id === field.id ? { ...f, conditions } : f
+    );
+    onUpdate(updatedFields);
+  };
+
+  const handleValidationChange = (updatedField) => {
+    const updatedFields = fields.map((f) =>
+      f.id === field.id ? updatedField : f
     );
     onUpdate(updatedFields);
   };
@@ -132,36 +123,40 @@ const FieldSettings = ({ selectedField, fields, onUpdate }) => {
 
       {!isSection && (
         <>
-          {needsPlaceholder && (
-            <div className="field-settings-group">
-              <label className="field-settings-label">Placeholder</label>
-              <input
-                type="text"
-                value={field.placeholder || ""}
-                onChange={(e) => handlePlaceholderChange(e.target.value)}
-                className="field-settings-input"
-                placeholder="Placeholder text"
-              />
-            </div>
+      {needsPlaceholder && (
+        <div className="field-settings-group">
+          <label className="field-settings-label">Placeholder</label>
+          <input
+            type="text"
+            value={field.placeholder || ""}
+            onChange={(e) => handlePlaceholderChange(e.target.value)}
+            className="field-settings-input"
+            placeholder="Placeholder text"
+          />
+        </div>
+      )}
+
+      {needsOptions && (
+        <div className="field-settings-group">
+          <label className="field-settings-label">Options</label>
+          <OptionsEditor
+            options={field.options || ["Option 1"]}
+            onChange={handleOptionsChange}
+          />
+        </div>
           )}
 
-          <div className="field-settings-group">
-            <Toggle
-              value={field.required || false}
-              onChange={handleRequiredChange}
-              label="Required field"
-            />
-          </div>
+          <ConditionalEditor
+            conditions={field.conditions || []}
+            fields={fields}
+            currentFieldId={field.id}
+            onChange={handleConditionsChange}
+          />
 
-          {needsOptions && (
-            <div className="field-settings-group">
-              <label className="field-settings-label">Options</label>
-              <OptionsEditor
-                options={field.options || ["Option 1"]}
-                onChange={handleOptionsChange}
-              />
-            </div>
-          )}
+          <ValidationRules
+            field={field}
+            onUpdate={handleValidationChange}
+          />
         </>
       )}
     </div>

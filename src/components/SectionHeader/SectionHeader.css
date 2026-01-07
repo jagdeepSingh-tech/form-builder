@@ -1,71 +1,45 @@
 .section-header {
-  width: 100%;
-  background: var(--color-background);
-  padding: var(--spacing-lg) 0;
-  cursor: pointer;
-  transition: var(--transition-default);
-  margin-bottom: var(--spacing-md);
-}
-
-.section-header:hover {
-  background: var(--color-primary-light);
-}
-
-.section-header-selected {
-  background: var(--color-primary-light);
-}
-
-.section-header-content {
+  padding: 12px 16px;
+  margin: 12px 0;
+  background: #f8fafc;
+  border-left: 4px solid var(--primary);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 13px;
+  color: #1f2933;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 var(--spacing-lg);
-  margin-bottom: var(--spacing-md);
+  transition: all 0.2s ease;
 }
 
-.section-header-title {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.section-header:hover {
+  background: #eef2ff;
+  cursor: pointer;
+}
+
+.section-header.selected {
+  background: #e0e7ff;
+}
+
+.edit-hint {
+  margin-left: 12px;
+  font-size: 11px;
+  color: var(--primary);
+  font-weight: normal;
+  text-transform: none;
 }
 
 .section-header-delete {
-  padding: var(--spacing-xs);
-  background: var(--color-error-light);
+  background: none;
   border: none;
-  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: var(--font-size-sm);
-  color: var(--color-error);
-  transition: var(--transition-default);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  opacity: 0;
-  transition: opacity var(--transition-default);
-}
-
-.section-header:hover .section-header-delete,
-.section-header-selected .section-header-delete {
-  opacity: 1;
+  font-size: 16px;
+  opacity: 0.7;
+  padding: 4px;
 }
 
 .section-header-delete:hover {
-  background: #fecaca;
+  opacity: 1;
 }
-
-.section-header-divider {
-  height: 2px;
-  background: var(--color-border);
-  margin: 0 var(--spacing-lg);
-}
-
-.section-header-selected .section-header-divider {
-  background: var(--color-primary);
-}
-

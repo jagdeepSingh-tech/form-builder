@@ -45,8 +45,12 @@
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
   position: relative;
-  transition: var(--transition-default);
-  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: grab;
+}
+
+.form-canvas-field:active {
+  cursor: grabbing;
 }
 
 .form-canvas-field:hover {
@@ -142,7 +146,12 @@
   border: 1px solid transparent;
   padding: 12px;
   border-radius: 8px;
-  cursor: pointer;
+  cursor: grab;
+  transition: transform 0.2s ease;
+}
+
+.field-item:active {
+  cursor: grabbing;
 }
 
 .field-item.selected {
@@ -150,4 +159,22 @@
   background: var(--color-primary-light);
 }
 
+/* Drag and Drop Styles */
+.drag-placeholder {
+  height: 60px;
+  border: 2px dashed var(--color-primary);
+  border-radius: 8px;
+  margin-bottom: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  background: rgba(79, 70, 229, 0.05);
+}
 
+.dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+}
+
+.drop-target-end {
+  height: 20px;
+  width: 100%;
+}
