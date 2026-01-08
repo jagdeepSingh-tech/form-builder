@@ -23,11 +23,16 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--spacing-md);
-  cursor: pointer;
+  cursor: grab;
   transition: var(--transition-default);
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+  user-select: none;
+}
+
+.field-palette-item:active {
+  cursor: grabbing;
 }
 
 .field-palette-item:hover {

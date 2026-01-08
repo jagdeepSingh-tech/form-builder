@@ -178,3 +178,23 @@
   height: 20px;
   width: 100%;
 }
+
+/* Drop zones for palette drag-and-drop */
+.drop-zone {
+  height: 12px;
+  margin: 6px 0;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s ease;
+}
+
+.drop-zone-empty {
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drop-zone.active {
+  background: var(--color-primary-light);
+  border-radius: var(--radius-sm);
+}

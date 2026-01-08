@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { nanoid } from "nanoid";
 import Header from "./components/Header/Header";
 import FieldPalette from "./components/FieldPalette/FieldPalette";
 import FormCanvas from "./components/FormCanvas/FormCanvas";
@@ -14,6 +15,7 @@ export default function Root(props) {
   const [description, setDescription] = useState("");
   const [fields, setFields] = useState([]);
   const [selectedFieldId, setSelectedFieldId] = useState(null);
+  const [insertAfterId, setInsertAfterId] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [editingFormId, setEditingFormId] = useState(null);
   const [validationError, setValidationError] = useState(null);
@@ -41,6 +43,23 @@ export default function Root(props) {
     }
   }
 
+  function insertFieldAfter(fields, newField, afterId) {
+    if (!afterId) {
+      return [...fields, newField];
+    }
+    
+    const index = fields.findIndex((f) => f.id === afterId);
+    if (index === -1) {
+      return [...fields, newField];
+    }
+    
+    return [
+      ...fields.slice(0, index + 1),
+      newField,
+      ...fields.slice(index + 1)
+    ];
+  }
+
   const handleAddField = (type) => {
     const newField = createField(type);
 
@@ -65,18 +84,60 @@ export default function Root(props) {
 
   const handleSelectField = (fieldId) => {
     setSelectedFieldId(fieldId);
+    setInsertAfterId(fieldId);
   };
 
   const handleCloseDrawer = () => {
     setSelectedFieldId(null);
+    // Keep insertAfterId so insertion point remains when drawer closes
   };
 
   const handleDeleteField = (fieldId) => {
-    const newFields = fields.filter((f) => f.id !== fieldId);
-    setFields(newFields);
+    setFields((prev) => {
+      const index = prev.findIndex((f) => f.id === fieldId);
+      if (index === -1) return prev;
+
+      const field = prev[index];
+
+      // Normal field delete
+      if (field.type !== "section") {
+        return prev.filter((f) => f.id !== fieldId);
+      }
+
+      // Section delete → flatten children (keep all fields, remove only section header)
+      const updated = [];
+
+      for (let i = 0; i < prev.length; i++) {
+        if (i === index) continue; // skip section header
+        updated.push(prev[i]);
+      }
+
+      return updated;
+    });
+
     if (selectedFieldId === fieldId) {
       setSelectedFieldId(null);
     }
+    // Do NOT clear insertAfterId - let drag position control insertion
+    setValidationError(null);
+  };
+
+  const handleDuplicateField = (fieldId) => {
+    const index = fields.findIndex((f) => f.id === fieldId);
+    if (index === -1) return;
+
+    const original = fields[index];
+    const clone = {
+      ...original,
+      id: nanoid(),
+    };
+
+    const updated = [...fields];
+    updated.splice(index + 1, 0, clone);
+
+    setFields(updated);
+    setSelectedFieldId(clone.id);
+    setInsertAfterId(clone.id);
     setValidationError(null);
   };
 
@@ -84,6 +145,59 @@ export default function Root(props) {
     setFields(updatedFields);
     setValidationError(null);
   };
+
+  const handleCreateFieldFromPalette = (type, afterId, position) => {
+    const newField = createField(type);
+    
+    setFields((prevFields) => {
+      if (position === "top") {
+        return [newField, ...prevFields];
+      }
+      return insertFieldAfter(prevFields, newField, afterId);
+    });
+    
+    setSelectedFieldId(newField.id);
+    setInsertAfterId(newField.id);
+    setValidationError(null);
+  };
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    function handleKeyDown(e) {
+      const isInputFocused =
+        document.activeElement.tagName === "INPUT" ||
+        document.activeElement.tagName === "TEXTAREA" ||
+        document.activeElement.isContentEditable;
+
+      if (isInputFocused) return;
+      if (!selectedFieldId) return;
+
+      // Duplicate: Cmd/Ctrl + D
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "d") {
+        e.preventDefault();
+        handleDuplicateField(selectedFieldId);
+        return;
+      }
+
+      // Delete: Delete or Backspace
+      if (e.key === "Delete" || e.key === "Backspace") {
+        e.preventDefault();
+        handleDeleteField(selectedFieldId);
+        return;
+      }
+
+      // Escape: Close drawer
+      if (e.key === "Escape") {
+        e.preventDefault();
+        handleCloseDrawer();
+        return;
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedFieldId, fields]);
 
   const validateForm = () => {
     if (!title || title.trim() === "") return "Form title is required";
@@ -158,6 +272,7 @@ export default function Root(props) {
             onSelectField={handleSelectField}
             onDeleteField={handleDeleteField}
             onUpdate={handleUpdateFields}
+            onCreateFieldFromPalette={handleCreateFieldFromPalette}
           />
         </div>
       </div>
@@ -166,6 +281,7 @@ export default function Root(props) {
         fields={fields}
         onUpdate={handleUpdateFields}
         onClose={handleCloseDrawer}
+        onDuplicate={handleDuplicateField}
       />
     </div>
   );

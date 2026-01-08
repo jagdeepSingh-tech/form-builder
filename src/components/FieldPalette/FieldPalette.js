@@ -12,6 +12,12 @@ const PALETTE_ITEMS = [
 ];
 
 const FieldPalette = ({ onAddField }) => {
+  const handleDragStart = (e, fieldType) => {
+    e.dataTransfer.effectAllowed = "copy";
+    e.dataTransfer.setData("fieldType", fieldType);
+    e.dataTransfer.setData("source", "palette");
+  };
+
   return (
     <div className="field-palette">
       <h2 className="field-palette-title">Field Palette</h2>
@@ -19,8 +25,9 @@ const FieldPalette = ({ onAddField }) => {
         {PALETTE_ITEMS.map((fieldType) => (
           <div
             key={fieldType.id}
+            draggable
             className={`field-palette-item ${fieldType.isSection ? "field-palette-item-section" : ""}`}
-            onClick={() => onAddField(fieldType.id)}
+            onDragStart={(e) => handleDragStart(e, fieldType.id)}
           >
             <span className="field-palette-icon">{fieldType.icon}</span>
             <span className="field-palette-label">{fieldType.label}</span>

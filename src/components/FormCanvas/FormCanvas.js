@@ -3,11 +3,12 @@ import SectionHeader from "../SectionHeader/SectionHeader";
 import { reorderFields, getDragBoundaries } from "../../utils/dragUtils";
 import "./FormCanvas.css";
 
-const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onUpdate }) => {
+const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onUpdate, onCreateFieldFromPalette }) => {
   const [draggingId, setDraggingId] = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
   const [dragSourceIndex, setDragSourceIndex] = useState(null);
   const [wasDragging, setWasDragging] = useState(false);
+  const [activeDropZone, setActiveDropZone] = useState(null);
 
   const handleDragStart = (e, index, fieldId) => {
     setDraggingId(fieldId);
@@ -15,6 +16,7 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
     setWasDragging(false);
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/plain", fieldId);
+    e.dataTransfer.setData("source", "canvas");
     
     // Create a transparent 1x1 pixel image to hide the default drag image
     const img = new Image();
@@ -39,8 +41,23 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
     e.preventDefault();
     e.stopPropagation();
 
+    const source = e.dataTransfer.getData("source");
+    
+    // Handle drop from palette (creating new field)
+    if (source === "palette") {
+      const fieldType = e.dataTransfer.getData("fieldType");
+      if (fieldType && onCreateFieldFromPalette) {
+        const afterId = targetIndex === -1 ? null : (fields[targetIndex]?.id || null);
+        onCreateFieldFromPalette(fieldType, afterId);
+      }
+      setActiveDropZone(null);
+      return;
+    }
+
+    // Handle reordering existing fields
     if (draggingId === null || dragSourceIndex === null) {
       resetDrag();
+      setActiveDropZone(null);
       return;
     }
 
@@ -48,6 +65,7 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
     const boundaries = getDragBoundaries(fields, dragSourceIndex);
     if (!boundaries) {
       resetDrag();
+      setActiveDropZone(null);
       return;
     }
 
@@ -70,14 +88,38 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
     }
 
     resetDrag();
+    setActiveDropZone(null);
   };
 
   const resetDrag = () => {
     setDraggingId(null);
     setDragSourceIndex(null);
     setDragOverIndex(null);
+    setActiveDropZone(null);
     // Reset wasDragging flag after a short delay to allow click events to be prevented
     setTimeout(() => setWasDragging(false), 100);
+  };
+
+  const handleDropZoneDragOver = (e, dropZoneId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const source = e.dataTransfer.getData("source");
+    
+    // Only show active state for palette drags
+    if (source === "palette") {
+      e.dataTransfer.dropEffect = "copy";
+      setActiveDropZone(dropZoneId);
+    } else if (source === "canvas") {
+      e.dataTransfer.dropEffect = "move";
+      // Don't set active drop zone for field reordering
+    }
+  };
+
+  const handleDropZoneDragLeave = (e) => {
+    // Only clear if we're actually leaving the drop zone (not just moving to a child)
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      setActiveDropZone(null);
+    }
   };
 
   const handleDragEnd = () => {
@@ -132,12 +174,37 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
   if (fields.length === 0) {
     return (
       <div className="form-canvas">
-        <div className="form-canvas-empty">
-          <div className="form-canvas-empty-icon">📋</div>
-          <h2 className="form-canvas-empty-title">Start building your form</h2>
-          <p className="form-canvas-empty-subtitle">
-            Choose a field type from the left to add it here.
-          </p>
+        <div className="form-canvas-content">
+          <div
+            className={`drop-zone drop-zone-empty ${activeDropZone === "empty" ? "active" : ""}`}
+            onDragOver={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const source = e.dataTransfer.getData("source");
+              if (source === "palette") {
+                e.dataTransfer.dropEffect = "copy";
+                setActiveDropZone("empty");
+              }
+            }}
+            onDragLeave={handleDropZoneDragLeave}
+            onDrop={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const fieldType = e.dataTransfer.getData("fieldType");
+              if (fieldType && onCreateFieldFromPalette) {
+                onCreateFieldFromPalette(fieldType, null, "top");
+              }
+              setActiveDropZone(null);
+            }}
+          >
+            <div className="form-canvas-empty">
+              <div className="form-canvas-empty-icon">📋</div>
+              <h2 className="form-canvas-empty-title">Start building your form</h2>
+              <p className="form-canvas-empty-subtitle">
+                Drag a field type from the left to add it here.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -146,6 +213,22 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
   return (
     <div className="form-canvas">
       <div className="form-canvas-content">
+        {/* Drop zone at top of form */}
+        <div
+          className={`drop-zone ${activeDropZone === "top" ? "active" : ""}`}
+          onDragOver={(e) => handleDropZoneDragOver(e, "top")}
+          onDragLeave={handleDropZoneDragLeave}
+          onDrop={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const fieldType = e.dataTransfer.getData("fieldType");
+            if (fieldType && onCreateFieldFromPalette) {
+              onCreateFieldFromPalette(fieldType, null, "top");
+            }
+            setActiveDropZone(null);
+          }}
+        />
+        
         {fields.map((field, index) => {
           const isSelected = selectedFieldId === field.id;
           const isDragging = draggingId === field.id;
@@ -172,14 +255,44 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
           };
 
           return (
-            <div
-              key={field.id}
-              className="field-wrapper"
-              onDragOver={(e) => handleDragOver(e, index)}
-              onDrop={(e) => handleDrop(e, index)}
-            >
-              {renderPlaceholder()}
-              {field.type === "section" ? (
+            <React.Fragment key={field.id}>
+              {/* Drop zone before this field */}
+              <div
+                className={`drop-zone ${activeDropZone === `before-${field.id}` ? "active" : ""}`}
+                onDragOver={(e) => handleDropZoneDragOver(e, `before-${field.id}`)}
+                onDragLeave={handleDropZoneDragLeave}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const source = e.dataTransfer.getData("source");
+                  
+                  if (source === "palette") {
+                    const fieldType = e.dataTransfer.getData("fieldType");
+                    if (fieldType && onCreateFieldFromPalette) {
+                      // Insert before this field
+                      if (index === 0) {
+                        // First field - insert at top
+                        onCreateFieldFromPalette(fieldType, null, "top");
+                      } else {
+                        // Insert after previous field
+                        const prevField = fields[index - 1];
+                        onCreateFieldFromPalette(fieldType, prevField.id);
+                      }
+                    }
+                  } else {
+                    handleDrop(e, index);
+                  }
+                  setActiveDropZone(null);
+                }}
+              />
+              
+              <div
+                className="field-wrapper"
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDrop={(e) => handleDrop(e, index)}
+              >
+                {renderPlaceholder()}
+                {field.type === "section" ? (
                 <div
                   {...dragProps}
                   className={`field-item${isSelected ? " selected" : ""} ${isDragging ? "dragging" : ""}`}
@@ -234,13 +347,33 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
                   </div>
                 </div>
               )}
-            </div>
+              </div>
+            </React.Fragment>
           );
         })}
         {/* Placeholder for dropping at the very end */}
         {dragOverIndex === fields.length && <div className="drag-placeholder" />}
 
-        {/* Invisible drop target for end of list */}
+        {/* Drop zone at bottom of form */}
+        {fields.length > 0 && (
+          <div
+            className={`drop-zone ${activeDropZone === "bottom" ? "active" : ""}`}
+            onDragOver={(e) => handleDropZoneDragOver(e, "bottom")}
+            onDragLeave={handleDropZoneDragLeave}
+            onDrop={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              const fieldType = e.dataTransfer.getData("fieldType");
+              if (fieldType && onCreateFieldFromPalette) {
+                const lastField = fields[fields.length - 1];
+                onCreateFieldFromPalette(fieldType, lastField.id);
+              }
+              setActiveDropZone(null);
+            }}
+          />
+        )}
+
+        {/* Invisible drop target for end of list (for field reordering) */}
         <div
           className="drop-target-end"
           onDragOver={(e) => handleDragOver(e, fields.length)}
