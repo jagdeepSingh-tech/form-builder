@@ -16,6 +16,7 @@ export default function FormMeta({
           </label>
           <input
             id="form-title"
+            data-tour="form-title"
             type="text"
             className="form-meta__input"
             placeholder="Untitled form"
@@ -30,6 +31,7 @@ export default function FormMeta({
           </label>
           <textarea
             id="form-description"
+            data-tour="form-description"
             className="form-meta__textarea"
             placeholder="Describe what this form is used for"
             rows={2}

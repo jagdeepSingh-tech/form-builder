@@ -1,5 +1,15 @@
 export const formBuilderTourSteps = [
     {
+        target: '[data-tour="form-title"]',
+        content: 'Start by giving your form a clear title so users know what this form is about.',
+        placement: 'bottom'
+    },
+    {
+        target: '[data-tour="form-description"]',
+        content: 'Add a short description to explain when and why this form should be used.',
+        placement: 'bottom'
+    },
+    {
         target: '.field-palette',
         content: 'Drag fields from here into your form.',
         placement: 'right'
