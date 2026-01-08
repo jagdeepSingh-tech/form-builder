@@ -47,4 +47,24 @@
   cursor: not-allowed;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
 
+.help-tour-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: var(--font-weight-medium);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  transition: var(--transition-default);
+}
+
+.help-tour-btn:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}

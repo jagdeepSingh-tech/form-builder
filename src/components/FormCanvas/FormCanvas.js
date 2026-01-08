@@ -315,7 +315,7 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
                   <>
                     <div
                       {...dragProps}
-                      className={`field-item${isSelected ? " selected" : ""} ${isDragging ? "dragging" : ""}`}
+                      className={`field-item field-card${isSelected ? " selected" : ""} ${isDragging ? "dragging" : ""}`}
                       onClick={(e) => {
                         // Only select if not dragging and wasn't just dragging
                         if (!draggingId && !wasDragging) {
@@ -366,7 +366,7 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
                 ) : (
                   <div
                     {...dragProps}
-                    className={`field-item ${isSelected ? "selected" : ""} ${isDragging ? "dragging" : ""}`}
+                    className={`field-item field-card ${isSelected ? "selected" : ""} ${isDragging ? "dragging" : ""}`}
                     onClick={(e) => {
                       // Only select if not dragging and wasn't just dragging
                       if (!draggingId && !wasDragging) {
@@ -379,6 +379,16 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
                         }`}
                     >
                       <div className="form-canvas-field-actions">
+                        <button
+                          className="form-canvas-field-action field-settings-trigger"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSelectField(field.id);
+                          }}
+                          title="Field settings"
+                        >
+                          ⚙️
+                        </button>
                         <button
                           className="form-canvas-field-action form-canvas-field-action-delete"
                           onClick={(e) => {

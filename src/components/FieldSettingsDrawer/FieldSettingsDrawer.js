@@ -30,7 +30,7 @@ export default function FieldSettingsDrawer({ selectedField, fields, onUpdate, o
         className="field-settings-drawer-overlay"
         onClick={handleOverlayClick}
       />
-      <div className="field-settings-drawer open">
+      <div className="field-settings-drawer field-settings-panel open">
         <div className="drawer-header">
           <h3 className="drawer-title">Field Settings</h3>
           <div className="drawer-header-actions">
