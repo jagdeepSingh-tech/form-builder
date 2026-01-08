@@ -119,3 +119,23 @@ html {
   color: #dc2626;
   font-size: 0.875rem;
 }
+
+/* Forceful reset for form builder items to remove all residual borders */
+.field-item,
+.field-wrapper,
+.field-card,
+.section-header,
+.section-empty-state {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Maintain soft shadow for fields only */
+.form-canvas-field {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+}
+
+.form-canvas-field:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}

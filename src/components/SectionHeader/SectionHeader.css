@@ -3,9 +3,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px;
+  padding: 14px 16px;
   margin: 24px 0 16px;
-  background: var(--surface-2);
+  background: #f7f7f8;
+  border: none;
   border-radius: 10px;
   position: relative;
   transition: var(--transition-default);
@@ -15,20 +16,21 @@
   content: "";
   position: absolute;
   left: 0;
-  top: 12px;
-  bottom: 12px;
+  top: 10px;
+  bottom: 10px;
   width: 4px;
   background: var(--primary);
   border-radius: 4px;
 }
 
 .section-header:hover {
-  background: var(--color-primary-light);
+  background: #f0f0f1;
   cursor: pointer;
 }
 
 .section-header.selected {
-  background: #e0e7ff;
+  background: #f0f0f1;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .section-title {

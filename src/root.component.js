@@ -24,6 +24,39 @@ export default function Root(props) {
   const [validationError, setValidationError] = useState(null);
   const [runTour, setRunTour] = useState(false);
   const [tourStepIndex, setTourStepIndex] = useState(0);
+  const [isTourDemoMode, setIsTourDemoMode] = useState(false);
+  const [originalFields, setOriginalFields] = useState(null);
+
+  const getDemoFormFields = () => [
+    {
+      id: "demo-section-1",
+      type: "section",
+      label: "Patient Information",
+    },
+    {
+      id: "demo-name",
+      type: "text",
+      label: "Full Name",
+      placeholder: "Enter full name",
+      required: true,
+    },
+    {
+      id: "demo-dob",
+      type: "date",
+      label: "Date of Birth",
+      required: true,
+    },
+  ];
+
+  const handleStartTour = () => {
+    if (fields.length === 0) {
+      setOriginalFields(fields);
+      setFields(getDemoFormFields());
+      setIsTourDemoMode(true);
+    }
+    setTourStepIndex(0);
+    setRunTour(true);
+  };
 
   useEffect(() => {
     const state = window.history.state;
@@ -173,6 +206,10 @@ export default function Root(props) {
     if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
       setRunTour(false);
       setTourStepIndex(0);
+      if (isTourDemoMode) {
+        setFields([]);
+        setIsTourDemoMode(false);
+      }
     }
   };
 
@@ -186,7 +223,9 @@ export default function Root(props) {
         showSkipButton={true}
         showProgress={true}
         disableOverlayClose={true}
+        disableScrolling={false}
         scrollToFirstStep={true}
+        spotlightClicks={false}
         callback={handleTourCallback}
         styles={{
           options: {
@@ -200,10 +239,7 @@ export default function Root(props) {
         onSave={handleSave}
         isSaving={isSaving}
         isFormValid={isFormValid}
-        onRestartTour={() => {
-          setTourStepIndex(0);
-          setRunTour(true);
-        }}
+        onRestartTour={handleStartTour}
       />
       <div className="root-layout">
         <div className="left-panel field-palette">

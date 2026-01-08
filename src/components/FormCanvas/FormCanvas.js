@@ -315,7 +315,7 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
                   <>
                     <div
                       {...dragProps}
-                      className={`field-item field-card${isSelected ? " selected" : ""} ${isDragging ? "dragging" : ""}`}
+                      className={`field-item field-card ${isSelected ? "selected" : ""} ${isDragging ? "dragging" : ""}`}
                       onClick={(e) => {
                         // Only select if not dragging and wasn't just dragging
                         if (!draggingId && !wasDragging) {
