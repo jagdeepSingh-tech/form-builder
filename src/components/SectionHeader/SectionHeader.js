@@ -7,14 +7,13 @@ export default function SectionHeader({ label, isSelected, onClick, onDelete }) 
       className={`section-header ${isSelected ? "selected" : ""}`}
       onClick={onClick}
     >
-      <span>
+      <span className="section-title">
         {label || "Untitled Section"}
-        {isSelected && <span className="edit-hint">Click to edit</span>}
       </span>
 
-      {isSelected && onDelete && (
+      {onDelete && (
         <button
-          className="section-header-delete"
+          className="section-delete-btn"
           onClick={(e) => {
             e.stopPropagation();
             onDelete();

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
+import toast, { Toaster } from "react-hot-toast";
 import Header from "./components/Header/Header";
 import FieldPalette from "./components/FieldPalette/FieldPalette";
 import FormCanvas from "./components/FormCanvas/FormCanvas";
@@ -39,7 +40,7 @@ export default function Root(props) {
       setEditingFormId(formId);
     } catch (error) {
       console.error("Failed to load form:", error);
-      alert("Failed to load form. Please try again.");
+      toast.error("Failed to load form. Please try again.");
     }
   }
 
@@ -47,12 +48,12 @@ export default function Root(props) {
     if (!afterId) {
       return [...fields, newField];
     }
-    
+
     const index = fields.findIndex((f) => f.id === afterId);
     if (index === -1) {
       return [...fields, newField];
     }
-    
+
     return [
       ...fields.slice(0, index + 1),
       newField,
@@ -93,6 +94,8 @@ export default function Root(props) {
   };
 
   const handleDeleteField = (fieldId) => {
+    const field = fields.find((f) => f.id === fieldId);
+
     setFields((prev) => {
       const index = prev.findIndex((f) => f.id === fieldId);
       if (index === -1) return prev;
@@ -101,17 +104,34 @@ export default function Root(props) {
 
       // Normal field delete
       if (field.type !== "section") {
+        toast.success("Field deleted");
         return prev.filter((f) => f.id !== fieldId);
       }
 
-      // Section delete → flatten children (keep all fields, remove only section header)
+      // Section delete → delete section and all children
       const updated = [];
+      let inSection = false;
 
       for (let i = 0; i < prev.length; i++) {
-        if (i === index) continue; // skip section header
+        if (i === index) {
+          inSection = true;
+          continue; // skip section header
+        }
+
+        // Stop deleting when we hit the next section
+        if (inSection && prev[i].type === "section") {
+          inSection = false;
+        }
+
+        // Skip fields that belong to the deleted section
+        if (inSection && prev[i].sectionId === fieldId) {
+          continue;
+        }
+
         updated.push(prev[i]);
       }
 
+      toast.success("Section deleted");
       return updated;
     });
 
@@ -148,14 +168,14 @@ export default function Root(props) {
 
   const handleCreateFieldFromPalette = (type, afterId, position) => {
     const newField = createField(type);
-    
+
     setFields((prevFields) => {
       if (position === "top") {
         return [newField, ...prevFields];
       }
       return insertFieldAfter(prevFields, newField, afterId);
     });
-    
+
     setSelectedFieldId(newField.id);
     setInsertAfterId(newField.id);
     setValidationError(null);
@@ -241,11 +261,11 @@ export default function Root(props) {
         setEditingFormId(formId);
       }
 
-      alert(`Form ${editingFormId ? "updated" : "saved"} successfully! Form ID: ${formId}`);
+      toast.success(`Form ${editingFormId ? "updated" : "saved"} successfully`);
       setValidationError(null);
     } catch (error) {
       console.error("Error saving form:", error);
-      alert("Failed to save form. Please check your Firebase configuration.");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setIsSaving(false);
     }
@@ -253,6 +273,7 @@ export default function Root(props) {
 
   return (
     <div className="root-container">
+      <Toaster position="top-right" />
       <Header onSave={handleSave} isSaving={isSaving} isFormValid={isFormValid} />
       <div className="root-layout">
         <div className="left-panel">

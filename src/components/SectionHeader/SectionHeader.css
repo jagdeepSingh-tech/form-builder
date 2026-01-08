@@ -1,21 +1,17 @@
 .section-header {
-  padding: 12px 16px;
-  margin: 12px 0;
-  background: #f8fafc;
-  border-left: 4px solid var(--primary);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  font-size: 13px;
-  color: #1f2933;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  transition: all 0.2s ease;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--color-surface);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--color-primary);
+  transition: var(--transition-default);
 }
 
 .section-header:hover {
-  background: #eef2ff;
+  background: var(--color-primary-light);
   cursor: pointer;
 }
 
@@ -23,23 +19,24 @@
   background: #e0e7ff;
 }
 
-.edit-hint {
-  margin-left: 12px;
-  font-size: 11px;
-  color: var(--primary);
-  font-weight: normal;
-  text-transform: none;
+.section-title {
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.4px;
+  color: var(--color-text);
 }
 
-.section-header-delete {
-  background: none;
+.section-delete-btn {
+  background: #fee2e2;
   border: none;
+  border-radius: 6px;
+  padding: 6px 8px;
   cursor: pointer;
-  font-size: 16px;
-  opacity: 0.7;
-  padding: 4px;
+  transition: background 0.15s ease;
+  font-size: 14px;
 }
 
-.section-header-delete:hover {
-  opacity: 1;
+.section-delete-btn:hover {
+  background: var(--color-error);
+  color: white;
 }
