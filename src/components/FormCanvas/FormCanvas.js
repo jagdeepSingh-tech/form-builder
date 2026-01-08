@@ -17,7 +17,7 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.setData("text/plain", fieldId);
     e.dataTransfer.setData("source", "canvas");
-    
+
     // Create a transparent 1x1 pixel image to hide the default drag image
     const img = new Image();
     img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
@@ -42,7 +42,7 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
     e.stopPropagation();
 
     const source = e.dataTransfer.getData("source");
-    
+
     // Handle drop from palette (creating new field)
     if (source === "palette") {
       const fieldType = e.dataTransfer.getData("fieldType");
@@ -104,7 +104,7 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
     e.preventDefault();
     e.stopPropagation();
     const source = e.dataTransfer.getData("source");
-    
+
     // Only show active state for palette drags
     if (source === "palette") {
       e.dataTransfer.dropEffect = "copy";
@@ -124,6 +124,21 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
 
   const handleDragEnd = () => {
     resetDrag();
+  };
+
+  // Helper to get children of a section
+  const getSectionChildren = (sectionId) => {
+    const sectionIndex = fields.findIndex((f) => f.id === sectionId);
+    if (sectionIndex === -1) return [];
+
+    const children = [];
+    for (let i = sectionIndex + 1; i < fields.length; i++) {
+      if (fields[i].type === "section") break;
+      if (fields[i].sectionId === sectionId) {
+        children.push(fields[i]);
+      }
+    }
+    return children;
   };
 
   const renderInput = (field) => {
@@ -228,7 +243,7 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
             setActiveDropZone(null);
           }}
         />
-        
+
         {fields.map((field, index) => {
           const isSelected = selectedFieldId === field.id;
           const isDragging = draggingId === field.id;
@@ -265,7 +280,7 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
                   e.preventDefault();
                   e.stopPropagation();
                   const source = e.dataTransfer.getData("source");
-                  
+
                   if (source === "palette") {
                     const fieldType = e.dataTransfer.getData("fieldType");
                     if (fieldType && onCreateFieldFromPalette) {
@@ -285,74 +300,112 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
                   setActiveDropZone(null);
                 }}
               />
-              
+
               <div
                 className="field-wrapper"
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDrop={(e) => handleDrop(e, index)}
               >
-                {renderPlaceholder()}
+                {/* Show drop indicator when dragging over */}
+                {dragOverIndex === index && draggingId !== field.id && (
+                  <div className="drop-indicator" />
+                )}
+
                 {field.type === "section" ? (
-                <div
-                  {...dragProps}
-                  className={`field-item${isSelected ? " selected" : ""} ${isDragging ? "dragging" : ""}`}
-                  onClick={(e) => {
-                    // Only select if not dragging and wasn't just dragging
-                    if (!draggingId && !wasDragging) {
-                      onSelectField(field.id);
-                    }
-                  }}
-                >
-                  <SectionHeader
-                    label={field.label}
-                    isSelected={isSelected}
-                    onClick={() => onSelectField(field.id)}
-                    onDelete={() => onDeleteField(field.id)}
-                  />
-                </div>
-              ) : (
-                <div
-                  {...dragProps}
-                  className={`field-item ${isSelected ? "selected" : ""} ${isDragging ? "dragging" : ""}`}
-                  onClick={(e) => {
-                    // Only select if not dragging and wasn't just dragging
-                    if (!draggingId && !wasDragging) {
-                      onSelectField(field.id);
-                    }
-                  }}
-                >
-                  <div
-                    className={`form-canvas-field ${isSelected ? "form-canvas-field-selected" : ""
-                      }`}
-                  >
-                    <div className="form-canvas-field-actions">
-                      <button
-                        className="form-canvas-field-action form-canvas-field-action-delete"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDeleteField(field.id);
-                        }}
-                        title="Delete field"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                    <label
-                      className={`form-canvas-field-label ${field.validations?.required ? "form-canvas-field-label-required" : ""}`}
+                  <>
+                    <div
+                      {...dragProps}
+                      className={`field-item${isSelected ? " selected" : ""} ${isDragging ? "dragging" : ""}`}
+                      onClick={(e) => {
+                        // Only select if not dragging and wasn't just dragging
+                        if (!draggingId && !wasDragging) {
+                          onSelectField(field.id);
+                        }
+                      }}
                     >
-                      {field.label || "Untitled Field"}
-                      {field.validations?.required && " *"}
-                    </label>
-                    {renderInput(field)}
+                      <SectionHeader
+                        label={field.label}
+                        isSelected={isSelected}
+                        onClick={() => onSelectField(field.id)}
+                        onDelete={() => onDeleteField(field.id)}
+                      />
+                    </div>
+
+                    {/* Empty section placeholder */}
+                    {getSectionChildren(field.id).length === 0 && (
+                      <div
+                        className={`section-empty-state ${activeDropZone === `section-${field.id}` ? "drag-over" : ""}`}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setActiveDropZone(`section-${field.id}`);
+                        }}
+                        onDragLeave={(e) => {
+                          if (!e.currentTarget.contains(e.relatedTarget)) {
+                            setActiveDropZone(null);
+                          }
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const source = e.dataTransfer.getData("source");
+
+                          if (source === "palette") {
+                            const fieldType = e.dataTransfer.getData("fieldType");
+                            if (fieldType && onCreateFieldFromPalette) {
+                              onCreateFieldFromPalette(fieldType, field.id);
+                            }
+                          }
+                          setActiveDropZone(null);
+                        }}
+                      >
+                        Drop fields here
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div
+                    {...dragProps}
+                    className={`field-item ${isSelected ? "selected" : ""} ${isDragging ? "dragging" : ""}`}
+                    onClick={(e) => {
+                      // Only select if not dragging and wasn't just dragging
+                      if (!draggingId && !wasDragging) {
+                        onSelectField(field.id);
+                      }
+                    }}
+                  >
+                    <div
+                      className={`form-canvas-field ${isSelected ? "form-canvas-field-selected" : ""
+                        }`}
+                    >
+                      <div className="form-canvas-field-actions">
+                        <button
+                          className="form-canvas-field-action form-canvas-field-action-delete"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteField(field.id);
+                          }}
+                          title="Delete field"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                      <label
+                        className={`form-canvas-field-label ${field.validations?.required ? "form-canvas-field-label-required" : ""}`}
+                      >
+                        {field.label || "Untitled Field"}
+                        {field.validations?.required && " *"}
+                      </label>
+                      {renderInput(field)}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
               </div>
             </React.Fragment>
           );
         })}
-        {/* Placeholder for dropping at the very end */}
-        {dragOverIndex === fields.length && <div className="drag-placeholder" />}
+        {/* Indicator for dropping at the very end */}
+        {dragOverIndex === fields.length && <div className="drop-indicator" />}
 
         {/* Drop zone at bottom of form */}
         {fields.length > 0 && (

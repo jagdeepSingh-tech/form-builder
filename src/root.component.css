@@ -16,6 +16,14 @@
   --color-shadow-hover: rgba(0, 0, 0, 0.06);
   --color-shadow-primary: rgba(79, 70, 229, 0.1);
 
+  --primary: #4f46e5;
+  --surface-1: #fafafa;
+  --surface-2: #f5f5f5;
+  --border-soft: #e0e0e0;
+  --text-muted: #9ca3af;
+  --danger: #dc2626;
+  --danger-soft: #fee2e2;
+
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
@@ -86,18 +94,18 @@ html {
 }
 
 /* Ensure children don't break the layout */
-.left-panel > * {
+.left-panel>* {
   height: 100%;
   overflow-y: auto;
   /* Allow internal scrolling but keep container hidden */
 }
 
 /* Hide scrollbar for cleaner look in panels */
-.left-panel > *::-webkit-scrollbar {
+.left-panel>*::-webkit-scrollbar {
   width: 4px;
 }
 
-.left-panel > *::-webkit-scrollbar-thumb {
+.left-panel>*::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 4px;
 }
