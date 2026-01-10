@@ -332,7 +332,7 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
                     </div>
 
                     {/* Empty section placeholder */}
-                    {getSectionChildren(field.id).length === 0 && (
+                    {/* {getSectionChildren(field.id).length === 0 && (
                       <div
                         className={`section-empty-state ${activeDropZone === `section-${field.id}` ? "drag-over" : ""}`}
                         onDragOver={(e) => {
@@ -361,7 +361,7 @@ const FormCanvas = ({ fields, selectedFieldId, onSelectField, onDeleteField, onU
                       >
                         Drop fields here
                       </div>
-                    )}
+                    )} */}
                   </>
                 ) : (
                   <div
