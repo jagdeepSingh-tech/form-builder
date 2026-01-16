@@ -59,10 +59,21 @@ export default function Root(props) {
   };
 
   useEffect(() => {
+    // Sync theme
+    const handler = (e) => {
+      document.documentElement.setAttribute("data-theme", e.detail);
+    };
+    window.addEventListener("theme-change", handler);
+
+    // Initial sync
+    const currentTheme = localStorage.getItem("app-theme") || "light";
+    document.documentElement.setAttribute("data-theme", currentTheme);
+
     const state = window.history.state;
     if (state && state.formId) {
       loadForm(state.formId);
     }
+    return () => window.removeEventListener("theme-change", handler);
   }, []);
 
   async function loadForm(formId) {

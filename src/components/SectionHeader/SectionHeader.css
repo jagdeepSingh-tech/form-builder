@@ -5,7 +5,7 @@
   justify-content: space-between;
   padding: 14px 16px;
   margin: 24px 0 16px;
-  background: #f7f7f8;
+  background: var(--bg-tertiary);
   border: none;
   border-radius: 10px;
   position: relative;
@@ -24,12 +24,12 @@
 }
 
 .section-header:hover {
-  background: #f0f0f1;
+  background: var(--card-bg);
   cursor: pointer;
 }
 
 .section-header.selected {
-  background: #f0f0f1;
+  background: var(--card-bg);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 

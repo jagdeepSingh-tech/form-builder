@@ -39,7 +39,7 @@
 }
 
 .form-canvas-field {
-  background: #ffffff;
+  background: var(--card-bg);
   border: none !important;
   border-radius: 12px;
   padding: var(--spacing-lg);
@@ -59,7 +59,7 @@
 }
 
 .form-canvas-field-selected {
-  background: #fafafa;
+  background: var(--bg-secondary);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
@@ -99,6 +99,7 @@
 
 .form-canvas-field-action-delete:hover {
   background: #fecaca;
+  /* Keep as is for danger state */
 }
 
 .form-canvas-field-label {
@@ -235,7 +236,7 @@
   color: #a0a0a0;
   font-size: 13px;
   font-weight: 500;
-  background: #fdfdfd;
+  background: var(--bg-secondary);
   transition: all 0.15s ease;
 }
 
