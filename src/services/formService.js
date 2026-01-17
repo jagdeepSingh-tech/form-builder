@@ -12,21 +12,21 @@ const normalizeField = (field) => {
       ? { options: field.options.map((option) => String(option)) }
       : {}),
   };
-  
+
   // Handle validations - migrate legacy field.required if needed
   const validations = field.validations || {};
   const hasLegacyRequired = field.required !== undefined && !validations.hasOwnProperty('required');
-  
+
   if (hasLegacyRequired || (validations && Object.keys(validations).length > 0)) {
     const cleanedValidations = {};
-    
+
     // Migrate legacy required field
     if (hasLegacyRequired) {
       cleanedValidations.required = Boolean(field.required);
     } else if (validations.required !== undefined) {
       cleanedValidations.required = Boolean(validations.required);
     }
-    
+
     if (validations.minLength !== undefined) {
       cleanedValidations.minLength = Number(validations.minLength);
     }
@@ -45,12 +45,12 @@ const normalizeField = (field) => {
     if (validations.errorMessage) {
       cleanedValidations.errorMessage = String(validations.errorMessage);
     }
-    
+
     if (Object.keys(cleanedValidations).length > 0) {
       normalized.validations = cleanedValidations;
     }
   }
-  
+
   return normalized;
 };
 
@@ -67,6 +67,7 @@ const normalizeForm = (form, { formId, isNew }) => {
     title: form.title ? String(form.title) : "",
     description: form.description ? String(form.description) : "",
     fields: normalizedFields,
+    status: form.status || 'active', // Default to active
     createdAt: isNew ? now : form.createdAt || now,
     updatedAt: now,
   };

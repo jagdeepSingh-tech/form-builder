@@ -100,9 +100,25 @@ const FieldSettings = ({ selectedField, fields, onUpdate }) => {
     onUpdate(updatedFields);
   };
 
+  const handleRequiredChange = (value) => {
+    const updatedValidations = {
+      ...(field.validations || {}),
+      required: value,
+    };
+    // Remove required if false to keep data clean
+    if (!value) {
+      delete updatedValidations.required;
+    }
+    const updatedFields = fields.map((f) =>
+      f.id === field.id ? { ...f, validations: updatedValidations } : f
+    );
+    onUpdate(updatedFields);
+  };
+
   const isSection = field.type === "section";
   const needsOptions = field.type === "select";
   const needsPlaceholder = !needsOptions && !isSection;
+  const isRequired = field.validations?.required || false;
 
   return (
     <div className="field-settings">
@@ -123,27 +139,47 @@ const FieldSettings = ({ selectedField, fields, onUpdate }) => {
 
       {!isSection && (
         <>
-      {needsPlaceholder && (
-        <div className="field-settings-group">
-          <label className="field-settings-label">Placeholder</label>
-          <input
-            type="text"
-            value={field.placeholder || ""}
-            onChange={(e) => handlePlaceholderChange(e.target.value)}
-            className="field-settings-input"
-            placeholder="Placeholder text"
-          />
-        </div>
-      )}
+          {/* Required Toggle - First-class property */}
+          <div className="field-settings-group">
+            <div className="field-settings-toggle">
+              <div
+                className={`field-settings-toggle-switch ${isRequired ? "field-settings-toggle-switch-active" : ""}`}
+                onClick={() => handleRequiredChange(!isRequired)}
+              >
+                <div
+                  className={`field-settings-toggle-thumb ${isRequired ? "field-settings-toggle-thumb-active" : ""}`}
+                />
+              </div>
+              <label
+                className="field-settings-toggle-label"
+                onClick={() => handleRequiredChange(!isRequired)}
+              >
+                Required field
+              </label>
+            </div>
+          </div>
 
-      {needsOptions && (
-        <div className="field-settings-group">
-          <label className="field-settings-label">Options</label>
-          <OptionsEditor
-            options={field.options || ["Option 1"]}
-            onChange={handleOptionsChange}
-          />
-        </div>
+          {needsPlaceholder && (
+            <div className="field-settings-group">
+              <label className="field-settings-label">Placeholder</label>
+              <input
+                type="text"
+                value={field.placeholder || ""}
+                onChange={(e) => handlePlaceholderChange(e.target.value)}
+                className="field-settings-input"
+                placeholder="Placeholder text"
+              />
+            </div>
+          )}
+
+          {needsOptions && (
+            <div className="field-settings-group">
+              <label className="field-settings-label">Options</label>
+              <OptionsEditor
+                options={field.options || ["Option 1"]}
+                onChange={handleOptionsChange}
+              />
+            </div>
           )}
 
           <ConditionalEditor

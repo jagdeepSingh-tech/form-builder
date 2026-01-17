@@ -31,6 +31,10 @@
   margin-bottom: var(--spacing-xs);
 }
 
+:root[data-theme="dark"] .field-settings-label {
+  color: var(--text-secondary);
+}
+
 .field-settings-input {
   width: 100%;
   padding: var(--spacing-sm);
@@ -44,10 +48,22 @@
   box-sizing: border-box;
 }
 
+:root[data-theme="dark"] .field-settings-input {
+  background: rgba(15, 23, 42, 0.5);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+}
+
 .field-settings-input:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px var(--color-shadow-primary);
+}
+
+:root[data-theme="dark"] .field-settings-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+  background: rgba(15, 23, 42, 0.7);
 }
 
 .field-settings-toggle {
@@ -60,14 +76,26 @@
   position: relative;
   width: 44px;
   height: 24px;
-  background: var(--color-border);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   cursor: pointer;
   transition: var(--transition-default);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:root[data-theme="dark"] .field-settings-toggle-switch {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .field-settings-toggle-switch-active {
   background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+:root[data-theme="dark"] .field-settings-toggle-switch-active {
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .field-settings-toggle-thumb {
@@ -90,6 +118,10 @@
   font-size: var(--font-size-base);
   color: var(--color-text-secondary);
   cursor: pointer;
+}
+
+:root[data-theme="dark"] .field-settings-toggle-label {
+  color: var(--text-secondary);
 }
 
 .field-settings-options-editor {
@@ -155,4 +187,3 @@
 .field-settings-option-add:hover {
   background: var(--color-border);
 }
-

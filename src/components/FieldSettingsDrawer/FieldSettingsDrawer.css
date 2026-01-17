@@ -10,6 +10,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -30,6 +31,12 @@
   transition: transform 0.25s ease;
 }
 
+:root[data-theme="dark"] .field-settings-drawer {
+  background: #1e293b;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .field-settings-drawer.open {
   transform: translateX(0);
 }
@@ -42,6 +49,11 @@
   align-items: center;
   flex-shrink: 0;
   background: var(--color-surface);
+}
+
+:root[data-theme="dark"] .drawer-header {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+  background: rgba(30, 41, 59, 0.8);
 }
 
 .drawer-header-actions {
@@ -71,10 +83,21 @@
   line-height: 1.4;
 }
 
+:root[data-theme="dark"] .drawer-action {
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-secondary);
+}
+
 .drawer-action:hover {
   background: var(--color-background);
   border-color: var(--color-border-hover);
   color: var(--color-text);
+}
+
+:root[data-theme="dark"] .drawer-action:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--text-primary);
 }
 
 .drawer-action-duplicate {
@@ -103,11 +126,19 @@
   color: var(--color-text);
 }
 
+:root[data-theme="dark"] .drawer-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .drawer-content {
   padding: 16px;
   overflow-y: auto;
   flex: 1;
   background: var(--color-surface);
+}
+
+:root[data-theme="dark"] .drawer-content {
+  background: #1e293b;
 }
 
 /* Ensure FieldSettings content fits in drawer */
@@ -124,4 +155,3 @@
 .drawer-content .field-settings-empty {
   display: none;
 }
-

@@ -72,15 +72,6 @@ export default function ValidationRules({ field, onUpdate }) {
       </div>
 
       <div className="validation-content">
-        {/* Required - shown for all field types */}
-        <div className="validation-row">
-          <Toggle
-            value={validations.required || false}
-            onChange={(value) => handleValidationChange("required", value)}
-            label="Required field"
-          />
-        </div>
-
         {/* Text field validations */}
         {isTextField && (
           <>

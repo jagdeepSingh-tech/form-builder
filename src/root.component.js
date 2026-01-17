@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Joyride, { STATUS } from "react-joyride";
 import { nanoid } from "nanoid";
-import toast, { Toaster } from "react-hot-toast";
 import Header from "./components/Header/Header";
 import FieldPalette from "./components/FieldPalette/FieldPalette";
 import FormCanvas from "./components/FormCanvas/FormCanvas";
@@ -26,6 +25,26 @@ export default function Root(props) {
   const [tourStepIndex, setTourStepIndex] = useState(0);
   const [isTourDemoMode, setIsTourDemoMode] = useState(false);
   const [originalFields, setOriginalFields] = useState(null);
+
+  const showToast = (message, actionLabel = null, onAction = null, type = "info") => {
+    window.dispatchEvent(
+      new CustomEvent("global-toast", {
+        detail: { type, message, actionLabel, onAction }
+      })
+    );
+  };
+
+  // Sync with global theme system
+  useEffect(() => {
+    const handleThemeChange = (e) => {
+      // Theme is already applied to document.documentElement by canvas-ui
+    };
+
+    window.addEventListener("theme-change", handleThemeChange);
+    return () => {
+      window.removeEventListener("theme-change", handleThemeChange);
+    };
+  }, []);
 
   const getDemoFormFields = () => [
     {
@@ -65,10 +84,6 @@ export default function Root(props) {
     };
     window.addEventListener("theme-change", handler);
 
-    // Initial sync
-    const currentTheme = localStorage.getItem("app-theme") || "light";
-    document.documentElement.setAttribute("data-theme", currentTheme);
-
     const state = window.history.state;
     if (state && state.formId) {
       loadForm(state.formId);
@@ -85,7 +100,7 @@ export default function Root(props) {
       setEditingFormId(formId);
     } catch (error) {
       console.error("Failed to load form:", error);
-      toast.error("Failed to load form. Please try again.");
+      showToast("Failed to load form. Please try again.", null, null, "error");
     }
   }
 
@@ -125,7 +140,7 @@ export default function Root(props) {
       if (index === -1) return prev;
       const field = prev[index];
       if (field.type !== "section") {
-        toast.success("Field deleted");
+        showToast("Field deleted", null, null, "success");
         return prev.filter((f) => f.id !== fieldId);
       }
       const updated = [];
@@ -139,7 +154,7 @@ export default function Root(props) {
         if (inSection && prev[i].sectionId === fieldId) continue;
         updated.push(prev[i]);
       }
-      toast.success("Section deleted");
+      showToast("Section deleted", null, null, "success");
       return updated;
     });
     if (selectedFieldId === fieldId) setSelectedFieldId(null);
@@ -198,11 +213,11 @@ export default function Root(props) {
         const id = await saveForm(formData);
         setEditingFormId(id);
       }
-      toast.success("Form saved successfully");
+      showToast("Form saved successfully", null, null, "success");
       setValidationError(null);
     } catch (error) {
       console.error("Error saving form:", error);
-      toast.error("Something went wrong. Please try again.");
+      showToast("Something went wrong. Please try again.", null, null, "error");
     } finally {
       setIsSaving(false);
     }
@@ -245,7 +260,6 @@ export default function Root(props) {
           },
         }}
       />
-      <Toaster position="top-right" />
       <Header
         onSave={handleSave}
         isSaving={isSaving}

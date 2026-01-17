@@ -48,8 +48,9 @@
 }
 
 :root[data-theme="dark"] .form-canvas-field {
-  border-color: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: var(--bg-surface);
 }
 
 .form-canvas-field:active {
@@ -62,8 +63,8 @@
 }
 
 :root[data-theme="dark"] .form-canvas-field:hover {
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .form-canvas-field-selected {
@@ -129,18 +130,26 @@
   margin-bottom: var(--spacing-sm);
 }
 
+:root[data-theme="dark"] .form-canvas-field-label {
+  color: var(--text-primary);
+}
+
 .form-canvas-field-label-required {
-  color: var(--color-text-secondary);
+  color: var(--accent);
   margin-left: 2px;
-  font-size: 12px;
-  font-weight: normal;
-  opacity: 0.6;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+:root[data-theme="dark"] .form-canvas-field-label-required {
+  color: var(--accent);
 }
 
 .form-canvas-input {
   width: 100%;
   padding: 10px 12px;
   font-size: var(--font-size-base);
+  line-height: 1.5;
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
   color: var(--color-text);
@@ -148,6 +157,18 @@
   transition: var(--transition-default);
   font-family: var(--font-family);
   height: 40px;
+  box-sizing: border-box;
+}
+
+:root[data-theme="dark"] .form-canvas-input {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .form-canvas-input::placeholder {
+  color: rgba(203, 213, 225, 0.5);
+  line-height: 1.5;
 }
 
 .form-canvas-input:focus {

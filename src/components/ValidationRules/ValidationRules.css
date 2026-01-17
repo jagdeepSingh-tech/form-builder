@@ -6,6 +6,11 @@
   margin-top: 16px;
 }
 
+:root[data-theme="dark"] .validation-block {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
 .validation-header {
   margin-bottom: 12px;
 }
@@ -46,6 +51,10 @@
   color: #374151;
 }
 
+:root[data-theme="dark"] .validation-label {
+  color: var(--text-secondary);
+}
+
 .validation-input {
   padding: 8px 12px;
   font-size: var(--font-size-sm);
@@ -58,14 +67,30 @@
   box-sizing: border-box;
 }
 
+:root[data-theme="dark"] .validation-input {
+  background: rgba(15, 23, 42, 0.5);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+}
+
 .validation-input:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px var(--color-shadow-primary);
 }
 
+:root[data-theme="dark"] .validation-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+  background: rgba(15, 23, 42, 0.7);
+}
+
 .validation-input::placeholder {
   color: var(--color-muted);
+}
+
+:root[data-theme="dark"] .validation-input::placeholder {
+  color: rgba(148, 163, 184, 0.6);
 }
 
 .validation-input-warning {
@@ -131,3 +156,6 @@
   cursor: pointer;
 }
 
+:root[data-theme="dark"] .validation-toggle-label {
+  color: var(--text-secondary);
+}
