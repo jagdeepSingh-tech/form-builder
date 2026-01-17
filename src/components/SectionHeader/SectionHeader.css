@@ -4,60 +4,95 @@
   align-items: center;
   justify-content: space-between;
   padding: 14px 16px;
-  margin: 24px 0 16px;
-  background: var(--bg-tertiary);
-  border: none;
+  margin: 24px 0 24px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: 10px;
   position: relative;
-  transition: var(--transition-default);
+  transition: all 0.2s ease;
+  cursor: grab;
+  min-height: 48px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+:root[data-theme="dark"] .section-header {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.section-header:active {
+  cursor: grabbing;
 }
 
 .section-header::before {
   content: "";
   position: absolute;
   left: 0;
-  top: 10px;
-  bottom: 10px;
+  top: 12px;
+  bottom: 12px;
   width: 4px;
-  background: var(--primary);
-  border-radius: 4px;
+  background: var(--color-primary);
+  border-radius: 0 3px 3px 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.section-header:hover::before,
+.section-header.selected::before {
+  opacity: 1;
 }
 
 .section-header:hover {
-  background: var(--card-bg);
-  cursor: pointer;
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+:root[data-theme="dark"] .section-header:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .section-header.selected {
-  background: var(--card-bg);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .section-title {
   font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.4px;
-  margin-left: 12px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
+  margin-left: 16px;
   color: var(--color-text);
+  line-height: 1.4;
 }
 
 .section-actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.section-header:hover .section-actions {
+  opacity: 1;
 }
 
 .section-delete-btn {
-  background: var(--danger-soft);
+  background: transparent;
   border: none;
   border-radius: 6px;
-  padding: 6px 8px;
+  padding: 6px;
   cursor: pointer;
-  transition: all 0.15s ease;
-  font-size: 14px;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  color: var(--color-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
 }
 
 .section-delete-btn:hover {
-  background: var(--danger);
-  color: white;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
 }
